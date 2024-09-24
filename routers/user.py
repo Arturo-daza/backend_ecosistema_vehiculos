@@ -18,12 +18,9 @@ user_router = APIRouter()
 database = Database.get_instance()
 get_db = database.get_db
 
-@user_router.post("/users/", response_model=User)
-def create_user(user: User, db: Session = Depends(get_db)):
-    user_service = UserService(db)
-    return user_service.create_user(user=user)
 
-@user_router.get("/users/me", dependencies=[Depends(JWTBearer())])
+
+@user_router.get("/me", dependencies=[Depends(JWTBearer())])
 def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
     Ruta protegida que devuelve información del usuario autenticado.

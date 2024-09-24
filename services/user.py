@@ -36,7 +36,9 @@ class UserService:
         # Validar si el correo ya existe
         if self.get_user_by_email(user.Email):
             raise HTTPException(status_code=400, detail="El correo ya está registrado")
-
+        elif self.get_user_by_email(user.NumeroDocumento):
+            raise HTTPException(status_code=400, detail="El Documento ya está registrado")
+        
         # Hashear la contraseña antes de almacenarla
         hashed_password = self.hash_password(user.Contrasena)
         user_data = user.model_dump()

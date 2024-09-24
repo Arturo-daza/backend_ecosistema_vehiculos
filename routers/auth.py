@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from jwt_manager import create_token
 from services.user import UserService
-from config.database import Database  # Asumo que tienes una función para obtener la sesión de la DB
+from config.database import Database 
+from schemas.user import User
 
 
 
@@ -28,3 +29,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     token = create_token(data={"id": user.IdUsuario, "email": user.Email,  "tipo_usuario": user.TipoUsuario, "role": user.IdRol})
 
     return {"access_token": token, "token_type": "bearer"}
+
+@auth_router.post("/register", response_model=User)
+def create_user(user: User, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.create_user(user=user)
