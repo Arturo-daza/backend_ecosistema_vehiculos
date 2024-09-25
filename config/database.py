@@ -4,16 +4,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
+from sqlalchemy.ext.declarative import declarative_base
 
 # Carga las variables de entorno desde .env
 load_dotenv()
 
 # Obtiene la URL de la base de datos desde las variables de entorno
-# DATABASE_URL = os.getenv("DATABASE_URL")
-DATABASE_URL = "mysql://root:QyLwrguxIuhUERnOlyooVsSioCpDNLUR@junction.proxy.rlwy.net:55098/railway"
+DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set in the environment variables.")
 
+Base = declarative_base()
 
 class Database:
     __instance = None
