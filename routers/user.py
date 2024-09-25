@@ -8,7 +8,7 @@ from services.user import UserService
 from schemas.user import User
 from middlewares.jwt_bearer import JWTBearer
 from fastapi.security import OAuth2PasswordBearer
-from jwt_manager import validate_token
+from utils.jwt_manager import validate_token
 
 # Usamos JWTBearer para verificar el token en rutas protegidas
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
