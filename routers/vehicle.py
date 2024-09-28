@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -74,21 +74,23 @@ def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user:
 
     return vehicles
 
-@vehicle_router.delete("/vehicles/{vehicle_id}", dependencies=[Depends(JWTBearer())])
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+@vehicle_router.delete("/vehicles/{vehicle_id}", status_code=204)
 def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     # Obtener el vehículo
     vehicle_service = VehicleService(db)
-    existing_vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  
+    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  # Asegúrate de tener este método en tu servicio
 
     # Verificar si el vehículo existe
-    if existing_vehicle is None:
+    if vehicle is None:
         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
 
-    # Verificar si el usuario tiene permiso para editar
-    if existing_vehicle.IdUsuario != current_user.IdUsuario and current_user.TipoUsuario != 'Superadmin':
-        raise HTTPException(status_code=403, detail="No tienes permiso para editar este vehículo")
-    
+    # Verificar si el usuario actual es el propietario o un super admin
+    if current_user.IdRol != 1 and vehicle.IdUsuario != current_user.IdUsuario:  # Suponiendo que el rol de super admin tiene IdRol 1
+        raise HTTPException(status_code=403, detail="No tienes permiso para eliminar este vehículo")
 
     # Eliminar el vehículo
-    vehicle_service.delete_vehicle(vehicle_id)  
-    return JSONResponse(status_code=204, content="Vehículo eliminado exitosamente")
+    vehicle_service.delete_vehicle(vehicle_id)  # Asegúrate de tener este método en tu servicio
+    return None

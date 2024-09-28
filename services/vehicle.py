@@ -21,8 +21,10 @@ class VehicleService:
     
     def delete_vehicle(self, vehicle_id):
         vehicle = self.db.query(VehiculoModel).filter(VehiculoModel.Placa == vehicle_id).first()
+        
         if vehicle:
             self.db.delete(vehicle)
             self.db.commit()
-            return True
-        return False
+            return {"message": "Vehículo eliminado exitosamente"}
+        else:
+            return {"error": "No se encontró el vehículo"}
