@@ -5,3 +5,5 @@ from .service import Service
 from .customService import CustomService
 from .location import Location
 from .sparepart import SparePart
+from .service_performed import ServicePerformed
+from .servicioRealizado_Repuesto import ServicioRealizadoRepuesto

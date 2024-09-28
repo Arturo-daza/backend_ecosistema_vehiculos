@@ -9,6 +9,7 @@ from routers.service import service_router
 from routers.customService import custom_service_router
 from routers.location import location_router
 from routers.sparepart import sparepart_router
+from routers.service_perfomed import service_performed_router
 
 
 app  = FastAPI()
@@ -24,6 +25,7 @@ app.include_router(service_router, prefix="/service", tags=["services"])
 app.include_router(custom_service_router, prefix="/custom_service", tags=["services"])
 app.include_router(location_router, prefix="/location", tags=["location"])
 app.include_router(sparepart_router, prefix="/sparepart", tags=["sparepart"])
+app.include_router(service_performed_router, prefix="/service/history", tags=["service history"])
 # app.include_router(movie_router)
 
 
