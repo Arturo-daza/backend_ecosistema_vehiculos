@@ -74,8 +74,6 @@ def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user:
 
     return vehicles
 
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
 
 @vehicle_router.delete("/vehicles/{vehicle_id}", status_code=204)
 def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
