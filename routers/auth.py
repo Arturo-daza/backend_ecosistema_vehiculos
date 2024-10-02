@@ -41,7 +41,7 @@ def create_user(user: User, db: Session = Depends(get_db)):
     return user_service.create_user(user=user)
 
 
-@auth_router.post("/auth/recover-password")
+@auth_router.post("/recover-password")
 def recover_password(recover_request: RecoverPasswordRequest, db: Session = Depends(get_db)):
     user_service = UserService(db)
     user = user_service.get_user_by_email(recover_request.email)
@@ -60,7 +60,7 @@ def recover_password(recover_request: RecoverPasswordRequest, db: Session = Depe
 
     return {"message": "Se ha enviado un enlace de recuperación a tu correo."}
 
-@auth_router.post("/auth/reset-password")
+@auth_router.post("/reset-password")
 def reset_password(reset_request: ResetPasswordRequest, db: Session = Depends(get_db)):
     token = reset_request.token
     new_password = reset_request.new_password
