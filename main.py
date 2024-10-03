@@ -10,6 +10,7 @@ from routers.customService import custom_service_router
 from routers.location import location_router
 from routers.sparepart import sparepart_router
 from routers.service_perfomed import service_performed_router
+from routers.file import file_router
 
 
 app  = FastAPI()
@@ -17,15 +18,15 @@ app.title = "Documentación Ecosistema Digital de vehículos"
 app.version= "0.0.1"
 
 app.add_middleware(ErrorHandler)
-app.include_router(user_router, prefix="/user", tags=["users"])
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(vehicle_router, prefix="/vehicle", tags=["vehicles"])
-app.include_router(vehicle_router, prefix="/vehicle", tags=["vehicles"])
-app.include_router(service_router, prefix="/service", tags=["services"])
-app.include_router(custom_service_router, prefix="/custom_service", tags=["services"])
-app.include_router(location_router, prefix="/location", tags=["location"])
-app.include_router(sparepart_router, prefix="/sparepart", tags=["sparepart"])
-app.include_router(service_performed_router, prefix="/service/history", tags=["service history"])
+app.include_router(user_router, prefix="/api/user", tags=["users"])
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
+app.include_router(vehicle_router, prefix="/api/vehicle", tags=["vehicles"])
+app.include_router(service_router, prefix="/api/service", tags=["services"])
+app.include_router(custom_service_router, prefix="/api/custom_service", tags=["services"])
+app.include_router(location_router, prefix="/api/location", tags=["location"])
+app.include_router(sparepart_router, prefix="/api/sparepart", tags=["sparepart"])
+app.include_router(service_performed_router, prefix="/api/service/history", tags=["service history"])
+app.include_router(file_router, prefix="/api/file", tags=["file"])
 # app.include_router(movie_router)
 
 
