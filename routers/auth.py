@@ -55,7 +55,7 @@ def recover_password(recover_request: RecoverPasswordRequest, db: Session = Depe
     # Opcional: Guarda el token en la base de datos si no estás usando JWT o quieres persistencia.
     
     # Enviar el email de recuperación con el token
-    recovery_link = f"https://tusitio.com/reset-password?token={recovery_token}"
+    recovery_link = f"http://ecosistemadigital.site/reset-password?token={recovery_token}"
     send_recovery_email(user.Email, recovery_link)
 
     return {"message": "Se ha enviado un enlace de recuperación a tu correo."}

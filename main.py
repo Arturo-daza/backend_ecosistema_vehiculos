@@ -27,12 +27,11 @@ app.include_router(location_router, prefix="/api/location", tags=["location"])
 app.include_router(sparepart_router, prefix="/api/sparepart", tags=["sparepart"])
 app.include_router(service_performed_router, prefix="/api/service/history", tags=["service history"])
 app.include_router(file_router, prefix="/api/file", tags=["file"])
-# app.include_router(movie_router)
 
 
 @app.get('/', tags=["home"])
 def message():
-    return HTMLResponse("<H1> HELLO </H1>")
+    return HTMLResponse("<H1> I Love YOU My Live </H1>")
   
 
 

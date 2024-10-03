@@ -9,7 +9,7 @@ database = Database.get_instance()
 get_db = database.get_db
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")  # Asegúrate de que esta URL coincida con tu ruta de inicio de sesión
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login") 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     # Validar el token y obtener los datos del usuario

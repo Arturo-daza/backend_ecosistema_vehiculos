@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from dependencies.validate_user_access import validate_user_access
 from middlewares.jwt_bearer import JWTBearer
 from schemas.vehicle import Vehicle as VehicleSchema, VehicleUpdate
 from schemas.user import User as UserSchema
@@ -35,7 +36,7 @@ def create_vehicle(vehiculo: VehicleSchema, db: Session = Depends(get_db), curre
 
 
 @vehicle_router.put("/{vehicle_id}", response_model=VehicleSchema, dependencies=[Depends(JWTBearer())])
-def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
+def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
     vehicle_service = VehicleService(db)
     
     # Obtener el vehículo a editar
@@ -60,14 +61,10 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depend
     return existing_vehicle
 
 @vehicle_router.get("/vehicles/{user_id}", response_model=List[VehicleSchema],  dependencies=[Depends(JWTBearer())])  
-def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
-    # Verificar si el usuario actual es el propietario o un super admin
-    if current_user.TipoUsuario != 'Superadmin' and current_user.IdUsuario != user_id: 
-        raise HTTPException(status_code=403, detail="No tienes permiso para acceder a estos vehículos")
-
+def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
     # Obtener vehículos del usuario
     vehicle_service = VehicleService(db)
-    vehicles = vehicle_service.get_vehicles_by_user(user_id)  # Asegúrate de que tengas este método en tu servicio de vehículos
+    vehicles = vehicle_service.get_vehicles_by_user(user_id)  
 
     if vehicles is None or len(vehicles) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron vehículos para este usuario")
@@ -75,19 +72,15 @@ def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user:
     return vehicles
 
 
-@vehicle_router.delete("/vehicles/{vehicle_id}", status_code=204)
-def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
+@vehicle_router.delete("/vehicles/{vehicle_id}", status_code=204, dependencies=[Depends(JWTBearer())])
+def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
     # Obtener el vehículo
     vehicle_service = VehicleService(db)
-    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  # Asegúrate de tener este método en tu servicio
-
+    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  
     # Verificar si el vehículo existe
     if vehicle is None:
         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
 
-    # Verificar si el usuario actual es el propietario o un super admin
-    if current_user.IdRol != 1 and vehicle.IdUsuario != current_user.IdUsuario:  # Suponiendo que el rol de super admin tiene IdRol 1
-        raise HTTPException(status_code=403, detail="No tienes permiso para eliminar este vehículo")
 
     # Eliminar el vehículo
     vehicle_service.delete_vehicle(vehicle_id)  # Asegúrate de tener este método en tu servicio
