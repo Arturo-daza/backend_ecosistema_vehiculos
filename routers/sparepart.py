@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from schemas.sparepart import SparePartCreate, SparePartUpdate, SparePartInDB
 from services.sparepart import SparePartService
-from dependencies import get_current_user
+from dependencies.get_current_user import get_current_user
 from config.database import Database
 from middlewares.jwt_bearer import JWTBearer
 from schemas.user import User as UserSchema
@@ -19,7 +19,7 @@ def create_spare_part(spare_part: SparePartCreate, db: Session = Depends(get_db)
     return spare_part_service.create_spare_part(spare_part)
 
 @sparepart_router.get("/spare-parts/{spare_part_id}", response_model=SparePartInDB, dependencies=[Depends(JWTBearer())])
-def get_spare_part(spare_part_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def get_spare_part(spare_part_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     spare_part_service = SparePartService(db)
     db_spare_part = spare_part_service.get_spare_part(spare_part_id)
@@ -29,7 +29,7 @@ def get_spare_part(spare_part_id: int, db: Session = Depends(get_db), current_us
 
 @sparepart_router.put("/spare-parts/{spare_part_id}", response_model=SparePartInDB, dependencies=[Depends(JWTBearer())]
 )
-def update_spare_part(spare_part_id: int, spare_part: SparePartUpdate, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def update_spare_part(spare_part_id: int, spare_part: SparePartUpdate, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     spare_part_service = SparePartService(db)
     db_spare_part = spare_part_service.update_spare_part(spare_part_id, spare_part)
@@ -38,7 +38,7 @@ def update_spare_part(spare_part_id: int, spare_part: SparePartUpdate, db: Sessi
     return db_spare_part
 
 @sparepart_router.delete("/spare-parts/{spare_part_id}", status_code=204, dependencies=[Depends(JWTBearer())])
-def delete_spare_part(spare_part_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def delete_spare_part(spare_part_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     spare_part_service = SparePartService(db)
     success = spare_part_service.delete_spare_part(spare_part_id)

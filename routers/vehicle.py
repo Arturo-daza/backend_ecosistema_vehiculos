@@ -36,7 +36,7 @@ def create_vehicle(vehiculo: VehicleSchema, db: Session = Depends(get_db), curre
 
 
 @vehicle_router.put("/{vehicle_id}", response_model=VehicleSchema, dependencies=[Depends(JWTBearer())])
-def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     vehicle_service = VehicleService(db)
     
     # Obtener el vehículo a editar
@@ -61,7 +61,7 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depend
     return existing_vehicle
 
 @vehicle_router.get("/vehicles/{user_id}", response_model=List[VehicleSchema],  dependencies=[Depends(JWTBearer())])  
-def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     # Obtener vehículos del usuario
     vehicle_service = VehicleService(db)
     vehicles = vehicle_service.get_vehicles_by_user(user_id)  
@@ -73,7 +73,7 @@ def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user:
 
 
 @vehicle_router.delete("/vehicles/{vehicle_id}", status_code=204, dependencies=[Depends(JWTBearer())])
-def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     # Obtener el vehículo
     vehicle_service = VehicleService(db)
     vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  

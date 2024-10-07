@@ -7,3 +7,4 @@ from .location import Location
 from .sparepart import SparePart
 from .service_performed import ServicePerformed
 from .servicioRealizado_Repuesto import ServicioRealizadoRepuesto
+from .preventive_maintenance import PreventiveMaintenance

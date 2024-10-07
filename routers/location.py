@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
+from dependencies.get_current_user import get_current_user
 from dependencies.validate_user_access import validate_user_access
 from middlewares.jwt_bearer import JWTBearer
 from schemas.location import LocationCreate, Location
@@ -19,7 +20,7 @@ def create_location(location: LocationCreate, db: Session = Depends(get_db)):
     return location_service.create_location(location)
 
 @location_router.get("/locations/{location_id}", response_model=Location, dependencies=[Depends(JWTBearer())])
-def get_location(location_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def get_location(location_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     location_service = LocationService(db)
     db_location = location_service.get_location(location_id)
@@ -28,13 +29,13 @@ def get_location(location_id: int, db: Session = Depends(get_db), current_user: 
     return db_location
 
 @location_router.get("/locations/", response_model=list[Location], dependencies=[Depends(JWTBearer())])
-def get_locations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def get_locations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     location_service = LocationService(db)
     return location_service.get_locations(skip=skip, limit=limit)
 
 @location_router.put("/locations/{location_id}", response_model=Location, dependencies=[Depends(JWTBearer())])
-def update_location(location_id: int, location: LocationCreate, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def update_location(location_id: int, location: LocationCreate, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     location_service = LocationService(db)
     db_location = location_service.update_location(location_id, location)
@@ -43,7 +44,7 @@ def update_location(location_id: int, location: LocationCreate, db: Session = De
     return db_location
 
 @location_router.delete("/locations/{location_id}", response_model=bool)
-def delete_location(location_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def delete_location(location_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     location_service = LocationService(db)
     return location_service.delete_location(location_id)

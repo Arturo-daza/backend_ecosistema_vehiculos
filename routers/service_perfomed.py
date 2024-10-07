@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
+from dependencies.get_current_user import get_current_user
 from schemas.service_performed import ServicePerformedCreate, ServicePerformed
 from services.service_performed import ServicePerformedService
 from middlewares.jwt_bearer import JWTBearer
@@ -20,7 +21,7 @@ def create_service_performed(service_performed: ServicePerformedCreate, db: Sess
 
 @service_performed_router.get("/{service_performed_id}", response_model=ServicePerformed, dependencies=[Depends(JWTBearer())]
 )
-def get_service_performed(service_performed_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def get_service_performed(service_performed_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     service = ServicePerformedService(db)
     result = service.get_service_performed(service_performed_id)
@@ -30,7 +31,7 @@ def get_service_performed(service_performed_id: int, db: Session = Depends(get_d
 
 @service_performed_router.delete("/{service_performed_id}", dependencies=[Depends(JWTBearer())]
 )
-def delete_service_performed(service_performed_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)
+def delete_service_performed(service_performed_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
 ):
     service = ServicePerformedService(db)
     if not service.delete_service_performed(service_performed_id):

@@ -11,6 +11,7 @@ from routers.location import location_router
 from routers.sparepart import sparepart_router
 from routers.service_perfomed import service_performed_router
 from routers.file import file_router
+from routers.preventive_maintenance import preventive_maintenance_router
 
 
 app  = FastAPI()
@@ -27,6 +28,7 @@ app.include_router(location_router, prefix="/api/location", tags=["location"])
 app.include_router(sparepart_router, prefix="/api/sparepart", tags=["sparepart"])
 app.include_router(service_performed_router, prefix="/api/service/history", tags=["service history"])
 app.include_router(file_router, prefix="/api/file", tags=["file"])
+app.include_router(preventive_maintenance_router, prefix="/api/maintenance", tags=["preventive maintenance"])
 
 
 @app.get('/', tags=["home"])

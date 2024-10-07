@@ -20,7 +20,7 @@ def create_custom_service(custom_service: CustomServiceCreate, db: Session = Dep
     return custom_service_service.create_custom_service(custom_service)
 
 @custom_service_router.get("/custom_services/{custom_service_id}", response_model=CustomService, dependencies=[Depends(JWTBearer())])
-def get_custom_service(custom_service_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def get_custom_service(custom_service_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     db_custom_service = custom_service_service.get_custom_service(custom_service_id)
     if db_custom_service is None:
@@ -28,7 +28,7 @@ def get_custom_service(custom_service_id: int, db: Session = Depends(get_db), cu
     return db_custom_service
 
 @custom_service_router.put("/custom_services/{custom_service_id}", response_model=CustomService, dependencies=[Depends(JWTBearer())])
-def update_custom_service(custom_service_id: int, custom_service: CustomServiceUpdate, db: Session = Depends(get_db) , current_user: UserSchema = Depends(validate_user_access)):
+def update_custom_service(custom_service_id: int, custom_service: CustomServiceUpdate, db: Session = Depends(get_db) , current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     db_custom_service = custom_service_service.update_custom_service(custom_service_id, custom_service)
     if db_custom_service is None:
@@ -36,7 +36,7 @@ def update_custom_service(custom_service_id: int, custom_service: CustomServiceU
     return db_custom_service
 
 @custom_service_router.delete("/custom_services/{custom_service_id}", dependencies=[Depends(JWTBearer())])
-def delete_custom_service(custom_service_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def delete_custom_service(custom_service_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     if not custom_service_service.delete_custom_service(custom_service_id):
         raise HTTPException(status_code=404, detail="Custom service not found")

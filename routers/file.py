@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, UploadFile, File as FastAPIFile, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
+from dependencies.get_current_user import get_current_user
 from dependencies.validate_user_access import validate_user_access
 from middlewares.jwt_bearer import JWTBearer
 from schemas.file import FileCreate, FileResponse
@@ -51,7 +52,7 @@ def upload_file(file: UploadFile = FastAPIFile(...), user_id: int = 1, tipo_enti
     return uploaded_file
 
 @file_router.delete("/{file_id}", response_model=FileResponse, dependencies=[Depends(JWTBearer())])
-def delete_file(file_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def delete_file(file_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     file_service = FileService(db)
     db_file = file_service.delete_file(file_id)
     
@@ -61,7 +62,7 @@ def delete_file(file_id: int, db: Session = Depends(get_db), current_user: UserS
     return db_file
 
 @file_router.get("/{file_id}", response_model=FileResponse, dependencies=[Depends(JWTBearer())])
-def get_file(file_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(validate_user_access)):
+def get_file(file_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     file_service = FileService(db)
     
     # Obtener archivo desde la base de datos
