@@ -15,5 +15,5 @@ class SparePart(Base):
 
     # Relationship
     foto = relationship("File", foreign_keys=[IdFoto])
-    servicios_realizados = relationship("ServicioRealizadoRepuesto", back_populates="repuesto")
+    servicios_realizados = relationship("ServicePerformedSparePart", back_populates="repuesto")
 

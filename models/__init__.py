@@ -6,5 +6,5 @@ from .customService import CustomService
 from .location import Location
 from .sparepart import SparePart
 from .service_performed import ServicePerformed
-from .servicioRealizado_Repuesto import ServicioRealizadoRepuesto
+from .service_performed_spare_part import ServicePerformedSparePart
 from .preventive_maintenance import PreventiveMaintenance

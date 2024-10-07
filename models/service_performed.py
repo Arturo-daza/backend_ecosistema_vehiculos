@@ -24,4 +24,4 @@ class ServicePerformed(Base):
     # IdCita = Column(Integer, ForeignKey('Cita.IdCita'))
 
     # Relaciones
-    repuestos = relationship("ServicioRealizadoRepuesto", back_populates="servicio_realizado")
+    repuestos = relationship("ServicePerformedSparePart", back_populates="servicio_realizado")

@@ -12,6 +12,7 @@ from routers.sparepart import sparepart_router
 from routers.service_perfomed import service_performed_router
 from routers.file import file_router
 from routers.preventive_maintenance import preventive_maintenance_router
+from routers.service_performed_spare_part import service_performed_spare_part_router
 
 
 app  = FastAPI()
@@ -24,6 +25,7 @@ app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(vehicle_router, prefix="/api/vehicle", tags=["vehicles"])
 app.include_router(service_router, prefix="/api/service", tags=["services"])
 app.include_router(custom_service_router, prefix="/api/custom_service", tags=["services"])
+app.include_router(service_performed_spare_part_router, prefix="/api/custom_service", tags=["services"])
 app.include_router(location_router, prefix="/api/location", tags=["location"])
 app.include_router(sparepart_router, prefix="/api/sparepart", tags=["sparepart"])
 app.include_router(service_performed_router, prefix="/api/service/history", tags=["service history"])
