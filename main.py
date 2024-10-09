@@ -23,7 +23,9 @@ app.version= "0.0.1"
 app.add_middleware(ErrorHandler)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*']
+    allow_origins=['*'],  # Permitir todos los origenes
+    allow_methods=["*"],  # Permitir todos los métodos
+    allow_headers=["*"]  # Permitir todos los encabezados
 )
 app.include_router(user_router, prefix="/api/user", tags=["users"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
