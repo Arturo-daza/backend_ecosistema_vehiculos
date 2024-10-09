@@ -17,7 +17,7 @@ file_router = APIRouter()
 
 get_db = Database.get_instance().get_db
 
-@file_router.post("/", response_model=FileResponse, dependencies=[Depends(JWTBearer())])
+@file_router.post("/", response_model=FileResponse)
 def upload_file(file: UploadFile = FastAPIFile(...), user_id: int = 1, tipo_entidad: str = "default", db: Session = Depends(get_db)):
     file_service = FileService(db)
     
