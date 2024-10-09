@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from utils.jwt_manager import create_token, validate_token
 from services.user import UserService
 from config.database import Database 
-from schemas.user import User
+from schemas.user import UserCreate, User
 from schemas.auth import RecoverPasswordRequest, ResetPasswordRequest
 from utils.email_sender import send_recovery_email
 from passlib.context import CryptContext
@@ -36,7 +36,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": token, "token_type": "bearer"}
 
 @auth_router.post("/register", response_model=User)
-def create_user(user: User, db: Session = Depends(get_db)):
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
     user_service = UserService(db)
     return user_service.create_user(user=user)
 

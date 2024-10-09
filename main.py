@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from schemas.user import User
 from middlewares.error_handler import ErrorHandler
 from routers.user import user_router
@@ -20,6 +21,10 @@ app.title = "Documentación Ecosistema Digital de vehículos"
 app.version= "0.0.1"
 
 app.add_middleware(ErrorHandler)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*']
+)
 app.include_router(user_router, prefix="/api/user", tags=["users"])
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(vehicle_router, prefix="/api/vehicle", tags=["vehicles"])
