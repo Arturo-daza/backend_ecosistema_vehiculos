@@ -60,7 +60,7 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depend
     db.refresh(existing_vehicle)
     return existing_vehicle
 
-@vehicle_router.get("/vehicles/{user_id}", response_model=List[VehicleSchema],  dependencies=[Depends(JWTBearer())])  
+@vehicle_router.get("/{user_id}/vehicles", response_model=List[VehicleSchema],  dependencies=[Depends(JWTBearer())])  
 def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     # Obtener vehículos del usuario
     vehicle_service = VehicleService(db)
@@ -72,7 +72,7 @@ def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user:
     return vehicles
 
 
-@vehicle_router.delete("/vehicles/{vehicle_id}", status_code=204, dependencies=[Depends(JWTBearer())])
+@vehicle_router.delete("/{vehicle_id}", status_code=204, dependencies=[Depends(JWTBearer())])
 def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     # Obtener el vehículo
     vehicle_service = VehicleService(db)
@@ -85,3 +85,16 @@ def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user:
     # Eliminar el vehículo
     vehicle_service.delete_vehicle(vehicle_id)  # Asegúrate de tener este método en tu servicio
     return None
+
+@vehicle_router.get("/{vehicle_id}", response_model=VehicleSchema, dependencies=[Depends(JWTBearer())])
+def get_vehicle_by_id(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
+    vehicle_service = VehicleService(db)
+    
+    # Obtener el vehículo por su ID
+    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  
+    
+    # Verificar si el vehículo existe
+    if vehicle is None:
+        raise HTTPException(status_code=404, detail="Vehículo no encontrado")
+    
+    return vehicle
