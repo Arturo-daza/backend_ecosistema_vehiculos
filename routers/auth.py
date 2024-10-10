@@ -31,7 +31,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
 
     # Crear token con los datos del usuario
-    token = create_token(data={"id": user.IdUsuario, "email": user.Email,  "tipo_usuario": user.TipoUsuario, "role": user.IdRol})
+    token = create_token(data={"id": user.IdUsuario, "email": user.Email, "nombre": user.Nombre, "documento": user.NumeroDocumento, "telefono": user.Telefono, "foto_perfil": user.FotoPerfil, "active": user.Activo,   "tipo_usuario": user.TipoUsuario, "role": user.IdRol})
 
     return {"access_token": token, "token_type": "bearer"}
 
