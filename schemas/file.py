@@ -8,7 +8,7 @@ class FileBase(BaseModel):
     Extension: Optional[str]
     Tamaño: Optional[int]
     Ruta: str
-    IdUsuarioSubida: int
+    IdUsuarioSubida: Optional[int]
     TipoEntidad: Optional[str]
 
     class Config:

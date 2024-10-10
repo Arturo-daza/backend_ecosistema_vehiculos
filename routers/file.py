@@ -18,7 +18,7 @@ file_router = APIRouter()
 get_db = Database.get_instance().get_db
 
 @file_router.post("/", response_model=FileResponse)
-def upload_file(file: UploadFile = FastAPIFile(...), user_id: int = 1, tipo_entidad: str = "default", db: Session = Depends(get_db)):
+def upload_file(file: UploadFile = FastAPIFile(...), tipo_entidad: str = "default", db: Session = Depends(get_db)):
     file_service = FileService(db)
     
     # Create a temporary file to store the uploaded content
@@ -34,7 +34,7 @@ def upload_file(file: UploadFile = FastAPIFile(...), user_id: int = 1, tipo_enti
         TipoArchivo=file.content_type,
         Extension=os.path.splitext(file.filename)[1],
         Tamaño=os.path.getsize(temp_file_path),
-        IdUsuarioSubida=user_id,
+        IdUsuarioSubida="10",
         TipoEntidad=tipo_entidad,
         Ruta=""  # Will be filled after uploading to the space
     )

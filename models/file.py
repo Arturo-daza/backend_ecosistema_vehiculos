@@ -13,7 +13,7 @@ class File(Base):
     Tamaño = Column(Integer)
     Ruta = Column(String(255), nullable=False)
     FechaSubida = Column(DateTime, default=datetime.now())
-    IdUsuarioSubida = Column(Integer, ForeignKey('Usuario.IdUsuario'), nullable=False)
+    IdUsuarioSubida = Column(Integer, ForeignKey('Usuario.IdUsuario'), nullable=True)
     TipoEntidad = Column(String(50))
 
 
