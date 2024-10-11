@@ -5,8 +5,10 @@ from sqlalchemy.orm import Session
 from dependencies.validate_user_access import validate_user_access
 from middlewares.jwt_bearer import JWTBearer
 from schemas.vehicle import Vehicle as VehicleSchema, VehicleUpdate
+from schemas.vehicle import VehicleResponse as VehicleResponseSchema
 from schemas.user import User as UserSchema
 from services.vehicle import VehicleService
+from services.file import FileService
 from config.database import Database
 from dependencies.get_current_user import get_current_user
 from typing import List
@@ -86,15 +88,22 @@ def delete_vehicle(vehicle_id: str, db: Session = Depends(get_db), current_user:
     vehicle_service.delete_vehicle(vehicle_id)  # Asegúrate de tener este método en tu servicio
     return None
 
-@vehicle_router.get("/{vehicle_id}", response_model=VehicleSchema, dependencies=[Depends(JWTBearer())])
+@vehicle_router.get("/{vehicle_id}", response_model=VehicleResponseSchema, dependencies=[Depends(JWTBearer())])
 def get_vehicle_by_id(vehicle_id: str, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     vehicle_service = VehicleService(db)
     
     # Obtener el vehículo por su ID
-    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)  
+    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id) 
     
     # Verificar si el vehículo existe
     if vehicle is None:
         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
+    print(vehicle.IdFoto)
+    if vehicle.IdFoto is not None:
+        # Obtener la URL de la foto del vehículo
+        file_service = FileService(db)
+        file = file_service.get_file(vehicle.IdFoto)
+        vehicle.IdFoto = file.Ruta
+        print(vehicle.IdFoto)
     
     return vehicle
