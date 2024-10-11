@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter, Depends, UploadFile, File as FastAPIFile, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
@@ -21,29 +22,37 @@ get_db = Database.get_instance().get_db
 def upload_file(file: UploadFile = FastAPIFile(...), tipo_entidad: str = "default", db: Session = Depends(get_db)):
     file_service = FileService(db)
     
-    # Create a temporary file to store the uploaded content
-    temp_file_path = f"/tmp/{file.filename}"
+    # Generar un identificador único (UUID)
+    unique_id = str(uuid.uuid4())
     
+    # Extraer la extensión del archivo original
+    file_extension = os.path.splitext(file.filename)[1]
     
+    # Generar el nuevo nombre del archivo con el UUID
+    new_filename = f"{os.path.splitext(file.filename)[0]}_{unique_id}{file_extension}"
+    
+    # Ruta temporal para almacenar el archivo subido
+    temp_file_path = f"/tmp/{new_filename}"
+    
+    # Guardar el archivo temporalmente
     with open(temp_file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Prepare file metadata for database
+    # Preparar los metadatos del archivo para la base de datos
     file_create = FileCreate(
-        NombreArchivo=file.filename,
+        NombreArchivo=new_filename,  # Usar el nuevo nombre con el UUID
         TipoArchivo=file.content_type,
-        Extension=os.path.splitext(file.filename)[1],
+        Extension=file_extension,
         Tamaño=os.path.getsize(temp_file_path),
-        IdUsuarioSubida="10",
+        IdUsuarioSubida="10",  # Este valor probablemente debas obtenerlo dinámicamente
         TipoEntidad=tipo_entidad,
-        Ruta=""  # Will be filled after uploading to the space
+        Ruta=""  # Esto se completará después de subir el archivo
     )
     
-    # Upload file and register in the database
+    # Subir el archivo y registrarlo en la base de datos
     uploaded_file = file_service.upload_file(file_create, temp_file_path)
     
-    
-    # Clean up the temporary file
+    # Limpiar el archivo temporal
     os.remove(temp_file_path)
     
     if not isinstance(uploaded_file, FileModel):
