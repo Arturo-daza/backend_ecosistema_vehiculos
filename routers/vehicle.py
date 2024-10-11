@@ -61,7 +61,6 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depend
     db.commit()
     db.refresh(existing_vehicle)
     return existing_vehicle
-
 @vehicle_router.get("/{user_id}/vehicles", response_model=List[VehicleResponseSchema], dependencies=[Depends(JWTBearer())])
 def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     vehicle_service = VehicleService(db)
@@ -74,14 +73,29 @@ def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user:
     
     file_service = FileService(db)
     
-    # Actualizar la IdFoto con la ruta de la imagen para cada vehículo
+    # Crear una lista para almacenar los vehículos con el campo 'urlFoto' agregado
+    vehicles_data = []
+    
+    # Procesar cada vehículo
     for vehicle in vehicles:
+        # Crear un diccionario de datos del vehículo
+        vehicle_data = vehicle.__dict__.copy()
+        
+        # Si tiene una foto, agregar la URL al JSON
         if vehicle.IdFoto is not None:
             file = file_service.get_file(vehicle.IdFoto)
             if file is not None:
-                vehicle.IdFoto = file.Ruta  # Actualizar el IdFoto con la ruta de la imagen
+                vehicle_data["urlFoto"] = file.Ruta  # Añadir la URL de la foto al JSON
+            else:
+                vehicle_data["urlFoto"] = None
+        else:
+            vehicle_data["urlFoto"] = None  # Si no tiene foto, devolver null o equivalente
+        
+        # Añadir el vehículo procesado a la lista
+        vehicles_data.append(vehicle_data)
     
-    return vehicles
+    return vehicles_data
+
 
 
 
@@ -104,17 +118,25 @@ def get_vehicle_by_id(vehicle_id: str, db: Session = Depends(get_db), current_us
     vehicle_service = VehicleService(db)
     
     # Obtener el vehículo por su ID
-    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id) 
+    vehicle = vehicle_service.get_vehiculo_by_placa(vehicle_id)
     
     # Verificar si el vehículo existe
     if vehicle is None:
         raise HTTPException(status_code=404, detail="Vehículo no encontrado")
-    print(vehicle.IdFoto)
+    
+    # Crear un JSON con la información del vehículo
+    vehicle_data = vehicle.__dict__.copy()
+    
+    # Si tiene una foto, agregar la URL al JSON
     if vehicle.IdFoto is not None:
-        # Obtener la URL de la foto del vehículo
         file_service = FileService(db)
         file = file_service.get_file(vehicle.IdFoto)
-        vehicle.IdFoto = file.Ruta
-        print(vehicle.IdFoto)
+        if file is not None:
+            vehicle_data["urlFoto"] = file.Ruta  # Añadir la URL de la foto al JSON
+        else:
+            vehicle_data["urlFoto"] = None
+    else:
+        vehicle_data["urlFoto"] = None  # Si no tiene foto, devolver null o algo equivalente
     
-    return vehicle
+    return vehicle_data
+

@@ -33,7 +33,7 @@ class VehicleUpdate(BaseModel):
         from_attributes = True
 
 class VehicleResponse(Vehicle):
-    IdFoto: Optional[str]= None
+    urlFoto: Optional[str] = None
 
     class Config:
         from_attributes = True
