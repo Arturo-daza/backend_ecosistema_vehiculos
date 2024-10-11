@@ -20,7 +20,7 @@ class DigitalOceanSpaces:
 
     def upload_file(self, file_path, object_name):
         try:
-            self.s3_client.upload_file(file_path, self.bucket_name, object_name)
+            self.s3_client.upload_file(file_path, self.bucket_name, object_name, ExtraArgs={'ACL': 'public-read'})
             return f"{os.getenv('DO_SPACE_ENDPOINT')}/{self.bucket_name}/{object_name}"
         except FileNotFoundError:
             return "File not found"
