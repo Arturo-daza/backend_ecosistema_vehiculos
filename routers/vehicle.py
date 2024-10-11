@@ -62,16 +62,27 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate, db: Session = Depend
     db.refresh(existing_vehicle)
     return existing_vehicle
 
-@vehicle_router.get("/{user_id}/vehicles", response_model=List[VehicleSchema],  dependencies=[Depends(JWTBearer())])  
+@vehicle_router.get("/{user_id}/vehicles", response_model=List[VehicleResponseSchema], dependencies=[Depends(JWTBearer())])
 def get_user_vehicles(user_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
-    # Obtener vehículos del usuario
     vehicle_service = VehicleService(db)
-    vehicles = vehicle_service.get_vehicles_by_user(user_id)  
-
+    
+    # Obtener vehículos del usuario
+    vehicles = vehicle_service.get_vehicles_by_user(user_id)
+    
     if vehicles is None or len(vehicles) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron vehículos para este usuario")
-
+    
+    file_service = FileService(db)
+    
+    # Actualizar la IdFoto con la ruta de la imagen para cada vehículo
+    for vehicle in vehicles:
+        if vehicle.IdFoto is not None:
+            file = file_service.get_file(vehicle.IdFoto)
+            if file is not None:
+                vehicle.IdFoto = file.Ruta  # Actualizar el IdFoto con la ruta de la imagen
+    
     return vehicles
+
 
 
 @vehicle_router.delete("/{vehicle_id}", status_code=204, dependencies=[Depends(JWTBearer())])
