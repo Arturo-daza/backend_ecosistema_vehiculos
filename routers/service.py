@@ -18,6 +18,11 @@ def create_servicio(servicio: ServicioCreate, db: Session = Depends(get_db)):
     servicio_service = ServiceService(db)
     return servicio_service.create_servicio(servicio=servicio)
 
+@service_router.get("/maintenance_service", response_model=list[ServicioOut], dependencies=[Depends(JWTBearer())])
+def get_servicios(db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
+    servicio_service = ServiceService(db)
+    return servicio_service.get_services_by_user(5)
+
 @service_router.get("/{servicio_id}", response_model=ServicioOut, dependencies=[Depends(JWTBearer())]
 )
 def get_servicio(servicio_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)
@@ -53,3 +58,6 @@ def delete_servicio(servicio_id: int, db: Session = Depends(get_db), current_use
     if not success:
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
     return {"message": "Servicio eliminado exitosamente"}
+
+
+

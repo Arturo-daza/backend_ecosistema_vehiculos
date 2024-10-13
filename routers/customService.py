@@ -14,12 +14,12 @@ get_db = database.get_db
 
 custom_service_router = APIRouter()
 
-@custom_service_router.post("/custom_services/", response_model=CustomService, dependencies=[Depends(JWTBearer())])
+@custom_service_router.post("/", response_model=CustomService, dependencies=[Depends(JWTBearer())])
 def create_custom_service(custom_service: CustomServiceCreate, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     return custom_service_service.create_custom_service(custom_service)
 
-@custom_service_router.get("/custom_services/{custom_service_id}", response_model=CustomService, dependencies=[Depends(JWTBearer())])
+@custom_service_router.get("/{custom_service_id}", response_model=CustomService, dependencies=[Depends(JWTBearer())])
 def get_custom_service(custom_service_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     db_custom_service = custom_service_service.get_custom_service(custom_service_id)
@@ -27,7 +27,7 @@ def get_custom_service(custom_service_id: int, db: Session = Depends(get_db), cu
         raise HTTPException(status_code=404, detail="Custom service not found")
     return db_custom_service
 
-@custom_service_router.put("/custom_services/{custom_service_id}", response_model=CustomService, dependencies=[Depends(JWTBearer())])
+@custom_service_router.put("/{custom_service_id}", response_model=CustomService, dependencies=[Depends(JWTBearer())])
 def update_custom_service(custom_service_id: int, custom_service: CustomServiceUpdate, db: Session = Depends(get_db) , current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     db_custom_service = custom_service_service.update_custom_service(custom_service_id, custom_service)
@@ -35,7 +35,7 @@ def update_custom_service(custom_service_id: int, custom_service: CustomServiceU
         raise HTTPException(status_code=404, detail="Custom service not found")
     return db_custom_service
 
-@custom_service_router.delete("/custom_services/{custom_service_id}", dependencies=[Depends(JWTBearer())])
+@custom_service_router.delete("/{custom_service_id}", dependencies=[Depends(JWTBearer())])
 def delete_custom_service(custom_service_id: int, db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     custom_service_service = CustomServiceService(db)
     if not custom_service_service.delete_custom_service(custom_service_id):

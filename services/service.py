@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.service import Service as ServiceModel
+from models.customService import CustomService as CustomServiceModel
 from schemas.service import ServicioCreate, ServicioUpdate
 
 class ServiceService:
@@ -38,3 +39,14 @@ class ServiceService:
             return True
         else:
             return False
+        
+    def get_services_by_user(self, user_id: int):
+        # Realizar un JOIN entre ServicioPersonalizado y Servicio
+        services = (
+            self.db.query(ServiceModel)
+            .join(CustomServiceModel, CustomServiceModel.IdServicio == ServiceModel.IdServicio)
+            .filter(CustomServiceModel.IdUsuario == user_id)
+            .all()
+        )
+        print(services)
+        return services    
