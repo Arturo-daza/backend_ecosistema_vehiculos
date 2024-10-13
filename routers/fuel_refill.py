@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
+from middlewares.jwt_bearer import JWTBearer
 from schemas.fuel_refill import FuelRefillCreate, FuelRefillResponse
 from services.fuel_refill import FuelRefillService
 
@@ -9,13 +10,13 @@ fuel_refill_router = APIRouter()
 get_db = Database.get_instance().get_db
 
 # Crear recarga de combustible
-@fuel_refill_router.post("/", response_model=FuelRefillResponse)
+@fuel_refill_router.post("/", response_model=FuelRefillResponse, dependencies=[Depends(JWTBearer())])
 def create_fuel_refill(refill: FuelRefillCreate, db: Session = Depends(get_db)):
     refill_service = FuelRefillService(db)
     return refill_service.create_fuel_refill(refill)
 
 # Obtener una recarga de combustible por ID
-@fuel_refill_router.get("/{refill_id}", response_model=FuelRefillResponse)
+@fuel_refill_router.get("/{refill_id}", response_model=FuelRefillResponse, dependencies=[Depends(JWTBearer())])
 def get_fuel_refill(refill_id: int, db: Session = Depends(get_db)):
     refill_service = FuelRefillService(db)
     db_refill = refill_service.get_fuel_refill(refill_id)
@@ -24,14 +25,14 @@ def get_fuel_refill(refill_id: int, db: Session = Depends(get_db)):
     return db_refill
 
 # Obtener todas las recargas de combustible de un vehículo
-@fuel_refill_router.get("/vehicles/{vehicle_id}", response_model=list[FuelRefillResponse])
+@fuel_refill_router.get("/vehicles/{vehicle_id}", response_model=list[FuelRefillResponse], dependencies=[Depends(JWTBearer())])
 def get_fuel_refills_by_vehicle(vehicle_id: str, db: Session = Depends(get_db)):
     refill_service = FuelRefillService(db)
     return refill_service.get_fuel_refills_by_vehicle(vehicle_id)
 
 # Eliminar una recarga de combustible por ID
 @fuel_refill_router.delete("/{refill_id}")
-def delete_fuel_refill(refill_id: int, db: Session = Depends(get_db)):
+def delete_fuel_refill(refill_id: int, db: Session = Depends(get_db), dependencies=[Depends(JWTBearer())]):
     refill_service = FuelRefillService(db)
     success = refill_service.delete_fuel_refill(refill_id)
     if not success:
