@@ -17,8 +17,11 @@ class Vehicle(Base):
     KilometrajeActual = Column(Integer)
     IdFoto = Column(Integer, ForeignKey('Archivo.IdArchivo'))  # ForeignKey to Archivo
 
-    # Relación con usuario (Usar cadena para evitar ciclos de importación)
+    # Relación con usuario
     usuario = relationship("User", backref="vehiculos")
     
     # Relación con archivo (foto del vehículo)
     foto = relationship("File", backref="vehiculos")  # Cambiado a "Archivo"
+    
+    # Relación con FuelRefill
+    recargas = relationship("FuelRefill", back_populates="vehiculo")
