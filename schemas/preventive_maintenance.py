@@ -21,8 +21,8 @@ class PreventiveMaintenanceBase(BaseModel):
 
     @field_validator('FrecuenciaTiempoTipo')
     def validate_frecuencia_tiempo_tipo(cls, value):
-        if value not in ['Dias', 'Semanas', 'Meses', 'Años']:
-            raise ValueError("Frecuencia tiempo tipo inválida. Debe ser 'Dias', 'Semanas', 'Meses', o 'Años'.")
+        if value not in ['Días', 'Semanas', 'Meses', 'Años']:
+            raise ValueError("Frecuencia tiempo tipo inválida. Debe ser 'Días', 'Semanas', 'Meses', o 'Años'.")
         return value
 
     class Config:
