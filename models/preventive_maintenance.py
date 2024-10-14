@@ -10,7 +10,7 @@ class PreventiveMaintenance(Base):
     FrecuenciaTipo = Column(Enum('Tiempo', 'Kilometraje'), nullable=False)
     FrecuenciaKilometraje = Column(Integer)
     FrecuenciaTiempo = Column(Integer)
-    FrecuenciaTiempoTipo = Column(Enum('Dias', 'Semanas', 'Meses', 'Años'))
+    FrecuenciaTiempoTipo = Column(Enum('Días', 'Semanas', 'Meses', 'Años'))
     FechaUltimoMantenimiento = Column(Date)
     KilometrajeUltimoMantenimiento = Column(Integer)
     Notas = Column(Text)
