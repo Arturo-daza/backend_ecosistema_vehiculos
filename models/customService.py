@@ -10,9 +10,9 @@ class CustomService(Base):
     IdServicioPersonalizado = Column(Integer, primary_key=True, autoincrement=True)
     IdServicio = Column(Integer, ForeignKey('Servicio.IdServicio'), nullable=False)
     IdUsuario = Column(Integer, ForeignKey('Usuario.IdUsuario'), nullable=False)
-    ValorPropietario = Column(DECIMAL(10, 2), nullable=False)
-    TiempoPropietario = Column(Integer, nullable=False)
-    NombreNegocio = Column(String(255), nullable=False)
+    ValorPropietario = Column(DECIMAL(10, 2), nullable=True)
+    TiempoPropietario = Column(Integer, nullable=True)
+    NombreNegocio = Column(String(255), nullable=True)
 
     service = relationship("Service", backref="custom_services")
     user = relationship("User", backref="custom_services")
