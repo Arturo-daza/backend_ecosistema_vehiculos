@@ -31,7 +31,7 @@ def get_services_by_vehicle(placa_vehiculo: str, db: Session = Depends(get_db)):
     return service_performed_service.get_services_by_vehicle(placa_vehiculo)
 
 # Eliminar un servicio realizado
-@temp_service_performed_router.delete("/services_performed/{service_performed_id}")
+@temp_service_performed_router.delete("/services_performed/{service_performed_id}",dependencies=[Depends(JWTBearer())])
 def delete_service_performed(service_performed_id: int, db: Session = Depends(get_db)):
     service_performed_service = TempServicePerformedService(db)
     success = service_performed_service.delete_service_performed(service_performed_id)
@@ -49,7 +49,7 @@ def get_services_by_user(user_id: int, db: Session = Depends(get_db)):
     return services
 
 # Obtener negocios, conceptos y repuestos vinculados a los servicios realizados por el usuario
-@temp_service_performed_router.get("/users/{user_id}/service-data", response_model=dict)
+@temp_service_performed_router.get("/users/{user_id}/service-data", response_model=dict,dependencies=[Depends(JWTBearer())])
 def get_service_data(user_id: int, db: Session = Depends(get_db)):
     service_performed_service = TempServicePerformedService(db)
     data = service_performed_service.get_business_concepts_spareparts(user_id)
@@ -59,7 +59,7 @@ def get_service_data(user_id: int, db: Session = Depends(get_db)):
 
     return data
 
-@temp_service_performed_router.put("/services_performed/{service_performed_id}", response_model=TempServicePerformed)
+@temp_service_performed_router.put("/services_performed/{service_performed_id}", response_model=TempServicePerformed,dependencies=[Depends(JWTBearer())])
 def update_service_performed(service_performed_id: int, service_performed: TempServicePerformedUpdate, db: Session = Depends(get_db)):
     service_performed_service = TempServicePerformedService(db)
     updated_service = service_performed_service.update_service_performed(service_performed_id, service_performed)

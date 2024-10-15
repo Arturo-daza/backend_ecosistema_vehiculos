@@ -31,8 +31,8 @@ def get_fuel_refills_by_vehicle(vehicle_id: str, db: Session = Depends(get_db)):
     return refill_service.get_fuel_refills_by_vehicle(vehicle_id)
 
 # Eliminar una recarga de combustible por ID
-@fuel_refill_router.delete("/{refill_id}")
-def delete_fuel_refill(refill_id: int, db: Session = Depends(get_db), dependencies=[Depends(JWTBearer())]):
+@fuel_refill_router.delete("/{refill_id}",dependencies=[Depends(JWTBearer())])
+def delete_fuel_refill(refill_id: int, db: Session = Depends(get_db)):
     refill_service = FuelRefillService(db)
     success = refill_service.delete_fuel_refill(refill_id)
     if not success:
@@ -40,7 +40,7 @@ def delete_fuel_refill(refill_id: int, db: Session = Depends(get_db), dependenci
     return {"message": "Recarga de combustible eliminada exitosamente"}
 
 # Obtener todas las recargas de combustible de un usuario
-@fuel_refill_router.get("/users/{user_id}", response_model=list[FuelRefillResponse])
+@fuel_refill_router.get("/users/{user_id}", response_model=list[FuelRefillResponse],dependencies=[Depends(JWTBearer())])
 def get_fuel_refills_by_user(user_id: int, db: Session = Depends(get_db)):
     refill_service = FuelRefillService(db)
     refills = refill_service.get_fuel_refills_by_user(user_id)
@@ -51,7 +51,7 @@ def get_fuel_refills_by_user(user_id: int, db: Session = Depends(get_db)):
     return refills
 
 # Actualizar una recarga de combustible
-@fuel_refill_router.put("/{refill_id}", response_model=FuelRefillUpdate)
+@fuel_refill_router.put("/{refill_id}", response_model=FuelRefillUpdate,dependencies=[Depends(JWTBearer())])
 def update_fuel_refill(refill_id: int, refill: FuelRefillUpdate, db: Session = Depends(get_db)):
     fuel_refill_service = FuelRefillService(db)
     updated_refill = fuel_refill_service.update_fuel_refill(refill_id, refill)
