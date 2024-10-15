@@ -30,3 +30,24 @@ class TempServicePerformed(TempServicePerformedBase):
 
     class Config:
         from_attributes = True
+
+
+class TempServicePerformedUpdate(BaseModel):
+    PlacaVehiculo: Optional[str]
+    TipoServicio: Optional[str]
+    NombreNegocio: Optional[str]
+    ValorServicio: Optional[float]
+    Duracion: Optional[int]
+    FotoServicio: Optional[int]
+    Comentarios: Optional[str]
+
+    # Campos adicionales para taller
+    Kilometraje: Optional[int]
+    Concepto: Optional[str]
+    Repuestos: Optional[str]
+    DescripcionFalla: Optional[str]
+    Diagnostico: Optional[str]
+
+    class Config:
+        from_attributes = True
+

@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
 from models.fuel_refill import FuelRefill as FuelRefillModel
-from schemas.fuel_refill import FuelRefillCreate
+from schemas.fuel_refill import FuelRefillCreate, FuelRefillUpdate
 from models.vehicle import Vehicle as VehicleModel
 class FuelRefillService:
     def __init__(self, db: Session):
@@ -52,5 +52,24 @@ class FuelRefillService:
         fuel_refills = query.all()
 
         return fuel_refills
+    
+    def update_fuel_refill(self, refill_id: int, refill_data: FuelRefillUpdate):
+        # Obtener la recarga de combustible existente
+        db_refill = self.get_fuel_refill(refill_id)
+        if not db_refill:
+            return None
+
+        # Actualizar los campos solo si se proporcionaron nuevos valores
+        update_data = refill_data.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_refill, key, value)
+
+        # Calcular nuevamente el costo total si se modifican los galones o el precio por galón
+        if "GalonesTanqueados" in update_data or "PrecioGalon" in update_data:
+            db_refill.CostoTotal = db_refill.GalonesTanqueados * db_refill.PrecioGalon
+
+        self.db.commit()
+        self.db.refresh(db_refill)
+        return db_refill 
 
     

@@ -26,3 +26,15 @@ class FuelRefillResponse(FuelRefillBase):
 
     class Config:
         from_attributes = True
+
+class FuelRefillUpdate(BaseModel):
+    IdVehiculo: Optional[str]
+    Kilometraje: Optional[int]
+    GalonesTanqueados: Optional[Decimal]
+    TipoCombustible: Optional[str]
+    PrecioGalon: Optional[Decimal]
+    EstacionServicio: Optional[str]
+    IdUbicacion: Optional[int]
+
+    class Config:
+        from_attributes = True

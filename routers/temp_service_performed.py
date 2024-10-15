@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
 from middlewares.jwt_bearer import JWTBearer
-from schemas.tem_service_performed import TempServicePerformedCreate, TempServicePerformed
+from schemas.tem_service_performed import TempServicePerformedCreate, TempServicePerformed, TempServicePerformedUpdate
 from services.tem_service_performed import TempServicePerformedService
 
 temp_service_performed_router = APIRouter()
@@ -59,3 +59,12 @@ def get_service_data(user_id: int, db: Session = Depends(get_db)):
 
     return data
 
+@temp_service_performed_router.put("/services_performed/{service_performed_id}", response_model=TempServicePerformed)
+def update_service_performed(service_performed_id: int, service_performed: TempServicePerformedUpdate, db: Session = Depends(get_db)):
+    service_performed_service = TempServicePerformedService(db)
+    updated_service = service_performed_service.update_service_performed(service_performed_id, service_performed)
+    
+    if not updated_service:
+        raise HTTPException(status_code=404, detail="Servicio realizado no encontrado")
+    
+    return updated_service

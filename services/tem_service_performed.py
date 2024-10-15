@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.tem_service_performed import TempServicePerformed as TempServicePerformedModel
-from schemas.tem_service_performed import TempServicePerformedCreate
+from schemas.tem_service_performed import TempServicePerformedCreate, TempServicePerformedUpdate
 from models.vehicle import Vehicle as VehicleModel
 
 class TempServicePerformedService:
@@ -73,3 +73,17 @@ class TempServicePerformedService:
             "conceptos": list(conceptos),
             "repuestos": list(repuestos)
         }
+    def update_service_performed(self, service_performed_id: int, service_performed_data: TempServicePerformedUpdate):
+        # Obtener el servicio realizado por ID
+        db_service_performed = self.get_service_performed(service_performed_id)
+        if not db_service_performed:
+            return None
+
+        # Actualizar los campos solo si se proporcionaron nuevos valores
+        update_data = service_performed_data.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_service_performed, key, value)
+
+        self.db.commit()
+        self.db.refresh(db_service_performed)
+        return db_service_performed

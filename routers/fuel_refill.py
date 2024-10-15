@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from config.database import Database
 from middlewares.jwt_bearer import JWTBearer
-from schemas.fuel_refill import FuelRefillCreate, FuelRefillResponse
+from schemas.fuel_refill import FuelRefillCreate, FuelRefillResponse, FuelRefillUpdate
 from services.fuel_refill import FuelRefillService
 
 fuel_refill_router = APIRouter()
@@ -49,3 +49,14 @@ def get_fuel_refills_by_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se encontraron recargas de combustible para este usuario")
     
     return refills
+
+# Actualizar una recarga de combustible
+@fuel_refill_router.put("/{refill_id}", response_model=FuelRefillUpdate)
+def update_fuel_refill(refill_id: int, refill: FuelRefillUpdate, db: Session = Depends(get_db)):
+    fuel_refill_service = FuelRefillService(db)
+    updated_refill = fuel_refill_service.update_fuel_refill(refill_id, refill)
+    
+    if not updated_refill:
+        raise HTTPException(status_code=404, detail="Recarga de combustible no encontrada")
+    
+    return updated_refill
