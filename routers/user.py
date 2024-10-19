@@ -21,7 +21,7 @@ get_db = database.get_db
 
 
 
-@user_router.get("/me", dependencies=[Depends(JWTBearer())])
+@user_router.get("/me",response_model=User,  dependencies=[Depends(JWTBearer())])
 def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
     Ruta protegida que devuelve información del usuario autenticado.
