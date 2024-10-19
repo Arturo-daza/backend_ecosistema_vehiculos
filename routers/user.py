@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
-from schemas.user import User
+from schemas.user import UserUpdate, User
 from config.database import Database
 from sqlalchemy.orm import Session
 from services.user import UserService
@@ -9,6 +9,7 @@ from schemas.user import User
 from middlewares.jwt_bearer import JWTBearer
 from fastapi.security import OAuth2PasswordBearer
 from utils.jwt_manager import validate_token
+from fastapi import HTTPException, status
 
 # Usamos JWTBearer para verificar el token en rutas protegidas
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -29,8 +30,28 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
     data= validate_token(token)
     return user_service.get_user_by_email(data['email'])
 
+# Actualizar un usuario
+@user_router.put("/update", response_model=User, status_code=status.HTTP_200_OK, dependencies=[Depends(JWTBearer())])
+def update_user_route(user: UserUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    data = validate_token(token)  # Validar el token para obtener información del usuario
+    user_id = data['user_id']  # Asegúrate de que el token contenga el user_id
+    updated_user = user_service.update_user(user_id, user)
+    if not updated_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+    return updated_user
 
 
+# Eliminar un usuario
+@user_router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(JWTBearer())])
+def delete_user_route(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    data = validate_token(token)  # Validar el token para obtener información del usuario
+    user_id = data['user_id']  # Asegúrate de que el token contenga el user_id
+    deleted = user_service.delete_user(user_id)
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+    return {"message": "Usuario eliminado"}
 
 # # Obtener un usuario por ID
 # @user_router.get("/{user_id}", response_model=User, status_code=status.HTTP_200_OK)
@@ -46,18 +67,3 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
 #     new_user = user_service.create_user(user)
 #     return new_user
 
-# # Actualizar un usuario
-# @user_router.put("/{user_id}", response_model=User, status_code=status.HTTP_200_OK)
-# async def update_user_route(user_id: int, user: UserUpdate, db: Session = Depends(get_db), user_service: UserService = Depends(UserService)):
-#     updated_user = user_service.update_user(user_id, user)
-#     if not updated_user:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-#     return updated_user
-
-# # Eliminar un usuario
-# @user_router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-# async def delete_user_route(user_id: int, db: Session = Depends(get_db), user_service: UserService = Depends(UserService)):
-#     deleted = user_service.delete_user(user_id)
-#     if not deleted:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-#     return {"message": "Usuario eliminado"}

@@ -66,12 +66,6 @@ def get_document(document_id: int, db: Session = Depends(get_db)):
     return db_document
 
 
-# Obtener documentos por vehículo
-@document_router.get("/vehicles/{vehicle_id}", response_model=list[Document], dependencies=[Depends(JWTBearer())])
-def get_documents_by_vehicle(vehicle_id: str, db: Session = Depends(get_db)):
-    document_service = DocumentService(db)
-    return document_service.get_documents_by_vehicle(vehicle_id)
-
 # Actualizar un documento
 @document_router.put("/{document_id}", response_model=Document, dependencies=[Depends(JWTBearer())])
 def update_document(document_id: int, document: DocumentUpdate, db: Session = Depends(get_db)):
