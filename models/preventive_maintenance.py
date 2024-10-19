@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, Date, Text, ForeignKey
 from config.database import Base
+from sqlalchemy.orm import relationship
 
 class PreventiveMaintenance(Base):
     __tablename__ = 'MantenimientoPreventivo'
@@ -14,3 +15,5 @@ class PreventiveMaintenance(Base):
     FechaUltimoMantenimiento = Column(Date)
     KilometrajeUltimoMantenimiento = Column(Integer)
     Notas = Column(Text)
+    
+    vehiculo = relationship("Vehicle", back_populates="mantenimientos")

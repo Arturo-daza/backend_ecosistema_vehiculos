@@ -16,6 +16,7 @@ from routers.preventive_maintenance import preventive_maintenance_router
 from routers.service_performed_spare_part import service_performed_spare_part_router
 from routers.fuel_refill import fuel_refill_router
 from routers.temp_service_performed import temp_service_performed_router
+from routers.document import document_router
 
 
 app  = FastAPI()
@@ -42,6 +43,7 @@ app.include_router(file_router, prefix="/api/file", tags=["file"])
 app.include_router(preventive_maintenance_router, prefix="/api/maintenance", tags=["preventive maintenance"])
 app.include_router(fuel_refill_router, prefix="/api/fuel_refills", tags=["fuel refills"])
 app.include_router(temp_service_performed_router, prefix="/api", tags=["temp service performed"])
+app.include_router(document_router, prefix="/documents", tags=["Documents"])
 
 
 @app.get('/', tags=["home"])

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
+from services.file import FileService
 from utils.jwt_manager import create_token, validate_token
 from services.user import UserService
 from config.database import Database 
@@ -29,6 +30,16 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     if user is None or not user_service.verify_password(form_data.password, user.Contrasena):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
+    
+    if user.FotoPerfil is not None:
+        file_service = FileService(db)
+        file = file_service.get_file(user.FotoPerfil)
+        if file is not None:
+            user.FotoPerfil = file.Ruta  # Añadir la URL de la foto al JSON
+        else:
+            user.FotoPerfil = None
+    else:
+        user.FotoPerfil= None  # Si no tiene foto, devolver null o algo equivalente
 
     # Crear token con los datos del usuario
     token = create_token(data={"id": user.IdUsuario, "email": user.Email, "nombre": user.Nombre, "documento": user.NumeroDocumento, "telefono": user.Telefono, "foto_perfil": user.FotoPerfil, "active": user.Activo,   "tipo_usuario": user.TipoUsuario, "role": user.IdRol})

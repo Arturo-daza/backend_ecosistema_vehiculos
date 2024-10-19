@@ -10,3 +10,4 @@ from .service_performed_spare_part import ServicePerformedSparePart
 from .preventive_maintenance import PreventiveMaintenance
 from .fuel_refill import FuelRefill
 from .tem_service_performed import TempServicePerformed
+from .document import Document

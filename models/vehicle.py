@@ -24,4 +24,10 @@ class Vehicle(Base):
     foto = relationship("File", backref="vehiculos")  # Cambiado a "Archivo"
     
     # Relación con FuelRefill
-    recargas = relationship("FuelRefill", back_populates="vehiculo")
+    recargas = relationship("FuelRefill", back_populates="vehiculo", cascade="all, delete-orphan")
+     # Relación con temp_service_performed
+    serviciosRealizados = relationship("TempServicePerformed", back_populates="vehiculo", cascade="all, delete-orphan")
+    # Relación con mantenimiento
+    mantenimientos = relationship("PreventiveMaintenance", back_populates="vehiculo", cascade="all, delete-orphan")
+    # Relación con documentos
+    documentos = relationship("Document", back_populates="vehiculo", cascade="all, delete-orphan")
