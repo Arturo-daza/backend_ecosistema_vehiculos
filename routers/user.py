@@ -35,7 +35,7 @@ def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get
 def update_user_route(user: UserUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_service = UserService(db)
     data = validate_token(token)  # Validar el token para obtener información del usuario
-    user_id = data['user_id']  # Asegúrate de que el token contenga el user_id
+    user_id = data['id']  # Asegúrate de que el token contenga el user_id
     updated_user = user_service.update_user(user_id, user)
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
@@ -47,7 +47,7 @@ def update_user_route(user: UserUpdate, token: str = Depends(oauth2_scheme), db:
 def delete_user_route(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_service = UserService(db)
     data = validate_token(token)  # Validar el token para obtener información del usuario
-    user_id = data['user_id']  # Asegúrate de que el token contenga el user_id
+    user_id = data['id']  # Asegúrate de que el token contenga el user_id
     deleted = user_service.delete_user(user_id)
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")

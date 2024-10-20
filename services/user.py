@@ -31,7 +31,10 @@ class UserService:
         """
         return pwd_context.hash(plain_password)
 
-
+    # Método para verificar si la contraseña está hasheada
+    def is_hashed(self, password: str) -> bool:
+        return password.startswith('$2b$')  # Comprobación básica para bcrypt
+    
     def create_user(self, user: User):
         # Validar si el correo ya existe
         if self.get_user_by_email(user.Email):
@@ -51,10 +54,16 @@ class UserService:
         return db_user
 
     def update_user(self, user_id: int, user: UserUpdate):
-        db_user = self.db.query(UserModel).filter(User.IdUsuario == user_id).first()
+        db_user = self.db.query(UserModel).filter(UserModel.IdUsuario == user_id).first()
+        
         if db_user:
             for var, value in user.dict(exclude_unset=True).items():
+                if var == "Contrasena":  # Validar la contraseña
+                    if not self.is_hashed(value):  # Si no está hasheada
+                        value = self.hash_password(value)
+                
                 setattr(db_user, var, value)
+                
             self.db.commit()
             self.db.refresh(db_user)
             return db_user
