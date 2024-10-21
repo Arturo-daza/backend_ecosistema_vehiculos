@@ -71,7 +71,7 @@ class UserService:
             return None
 
     def delete_user(self, user_id: int):
-        db_user = self.db.query(UserModel).filter(User.IdUsuario == user_id).first()
+        db_user = self.db.query(UserModel).filter(UserModel.IdUsuario == user_id).first()
         if db_user:
             self.db.delete(db_user)
             self.db.commit()

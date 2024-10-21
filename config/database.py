@@ -11,8 +11,6 @@ load_dotenv()
 
 # Obtiene la URL de la base de datos desde las variables de entorno
 DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set in the environment variables.")
 
 Base = declarative_base()
 
