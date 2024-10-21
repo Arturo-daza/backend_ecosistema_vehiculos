@@ -55,6 +55,7 @@ class UserService:
 
     def update_user(self, user_id: int, user: UserUpdate):
         db_user = self.db.query(UserModel).filter(UserModel.IdUsuario == user_id).first()
+        print(UserUpdate)
         
         if db_user:
             for var, value in user.dict(exclude_unset=True).items():
