@@ -11,3 +11,4 @@ from .preventive_maintenance import PreventiveMaintenance
 from .fuel_refill import FuelRefill
 from .tem_service_performed import TempServicePerformed
 from .document import Document
+from .link_of_interest import LinkOfInterest
