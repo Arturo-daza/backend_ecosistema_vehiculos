@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import date, datetime
 
 class TempServicePerformedBase(BaseModel):
     PlacaVehiculo: str
@@ -17,6 +17,7 @@ class TempServicePerformedBase(BaseModel):
     Repuestos: Optional[str] = None
     DescripcionFalla: Optional[str] = None
     Diagnostico: Optional[str] = None
+    Date: Optional[date] = None
 
     class Config:
         from_attributes = True
@@ -26,7 +27,6 @@ class TempServicePerformedCreate(TempServicePerformedBase):
 
 class TempServicePerformed(TempServicePerformedBase):
     IdServicioRealizado: int
-    Fecha: Optional[datetime]
 
     class Config:
         from_attributes = True
@@ -47,6 +47,7 @@ class TempServicePerformedUpdate(BaseModel):
     Repuestos: Optional[str]
     DescripcionFalla: Optional[str]
     Diagnostico: Optional[str]
+    Date: Optional[date]
 
     class Config:
         from_attributes = True

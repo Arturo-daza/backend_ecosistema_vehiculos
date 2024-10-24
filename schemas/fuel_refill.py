@@ -1,17 +1,17 @@
 from pydantic import BaseModel
 from typing import Optional
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, date
 
 class FuelRefillBase(BaseModel):
     IdVehiculo: str
-    Fecha: datetime = datetime.now()
     Kilometraje: int
     GalonesTanqueados: Decimal
     TipoCombustible: str
     PrecioGalon: Decimal
     EstacionServicio: Optional[str]
     IdUbicacion: Optional[int]
+    Date: Optional[date]
 
     class Config:
         from_attributes = True
@@ -21,7 +21,7 @@ class FuelRefillCreate(FuelRefillBase):
 
 class FuelRefillResponse(FuelRefillBase):
     IdRecargaCombustible: int
-    Fecha: Optional[datetime]
+    Date: Optional[date]
     CostoTotal: Decimal
 
     class Config:
@@ -35,6 +35,7 @@ class FuelRefillUpdate(BaseModel):
     PrecioGalon: Optional[Decimal]
     EstacionServicio: Optional[str]
     IdUbicacion: Optional[int]
+    Date: Optional[date]
 
     class Config:
         from_attributes = True

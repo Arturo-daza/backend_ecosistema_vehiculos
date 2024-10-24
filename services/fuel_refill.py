@@ -9,18 +9,20 @@ class FuelRefillService:
 
     def create_fuel_refill(self, refill: FuelRefillCreate):
         # Calcular el costo total
+        print(refill)
         costo_total = refill.GalonesTanqueados * refill.PrecioGalon
         db_refill = FuelRefillModel(
             IdVehiculo=refill.IdVehiculo,
-            Fecha = refill.Fecha,
             Kilometraje=refill.Kilometraje,
             GalonesTanqueados=refill.GalonesTanqueados,
             TipoCombustible=refill.TipoCombustible,
             PrecioGalon=refill.PrecioGalon,
             CostoTotal=costo_total,
             EstacionServicio=refill.EstacionServicio,
-            IdUbicacion=refill.IdUbicacion
+            IdUbicacion=refill.IdUbicacion,
+            Date = refill.Date
         )
+        print(db_refill)
         self.db.add(db_refill)
         self.db.commit()
         self.db.refresh(db_refill)

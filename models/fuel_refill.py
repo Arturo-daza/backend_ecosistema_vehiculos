@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DECIMAL, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DECIMAL, DateTime, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from config.database import Base
@@ -16,6 +16,7 @@ class FuelRefill(Base):
     CostoTotal = Column(DECIMAL(10, 2), nullable=False)
     EstacionServicio = Column(String(255), nullable=True)
     IdUbicacion = Column(Integer, ForeignKey('Ubicacion.IdUbicacion'), nullable=True)
+    Date = Column(Date, nullable=True)
 
     # Relaciones
     vehiculo = relationship("Vehicle", back_populates="recargas")

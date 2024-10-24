@@ -1,6 +1,6 @@
 from config.database import Base
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, DECIMAL, Text, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, DECIMAL, Text, Enum, Date
 from sqlalchemy.orm import relationship
 
 
@@ -24,6 +24,7 @@ class TempServicePerformed(Base):
     Diagnostico = Column(Text, nullable=True)  # Diagnóstico de la falla, solo para Taller
 
     Fecha = Column(DateTime, default=datetime.now)
+    Date = Column(Date, nullable=True)
     
     # Relaciones
     vehiculo = relationship("Vehicle", back_populates="serviciosRealizados")
