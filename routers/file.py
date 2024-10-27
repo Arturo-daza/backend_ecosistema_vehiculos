@@ -44,7 +44,7 @@ def upload_file(file: UploadFile = FastAPIFile(...), tipo_entidad: str = "defaul
         TipoArchivo=file.content_type,
         Extension=file_extension,
         Tamaño=os.path.getsize(temp_file_path),
-        IdUsuarioSubida="10",  # Este valor probablemente debas obtenerlo dinámicamente
+        IdUsuarioSubida="1",  # Este valor probablemente debas obtenerlo dinámicamente
         TipoEntidad=tipo_entidad,
         Ruta=""  # Esto se completará después de subir el archivo
     )

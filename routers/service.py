@@ -21,7 +21,7 @@ def create_servicio(servicio: ServicioCreate, db: Session = Depends(get_db)):
 @service_router.get("/maintenance_service", response_model=list[ServicioOut], dependencies=[Depends(JWTBearer())])
 def get_servicios(db: Session = Depends(get_db), current_user: UserSchema = Depends(get_current_user)):
     servicio_service = ServiceService(db)
-    return servicio_service.get_services_by_user(5)
+    return servicio_service.get_services_by_user(1)
 
 @service_router.get("/{servicio_id}", response_model=ServicioOut, dependencies=[Depends(JWTBearer())]
 )
