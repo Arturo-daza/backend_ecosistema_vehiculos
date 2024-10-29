@@ -25,6 +25,7 @@ class Document(DocumentBase):
     IdDocumento: int
     EstaVencido: Optional[bool] = False
     DiasParaVencer: Optional[int] = 0
+    urlFoto: Optional[str] = None
 
     class Config:
         from_attributes = True

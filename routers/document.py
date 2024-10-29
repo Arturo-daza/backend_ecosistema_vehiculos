@@ -5,6 +5,7 @@ from config.database import Database
 from middlewares.jwt_bearer import JWTBearer
 from schemas.document import DocumentCreate, DocumentUpdate, Document
 from services.document import DocumentService
+from services.file import FileService
 
 document_router = APIRouter()
 
@@ -39,31 +40,6 @@ def create_document(document: DocumentCreate, db: Session = Depends(get_db)):
     
     return db_document
 
-# Obtener un documento por ID
-@document_router.get("/{document_id}", response_model=Document, dependencies=[Depends(JWTBearer())])
-def get_document(document_id: int, db: Session = Depends(get_db)):
-    document_service = DocumentService(db)
-    
-    db_document = document_service.get_document(document_id)
-    if not db_document:
-        raise HTTPException(status_code=404, detail="Documento no encontrado")
-    
-    db_document = db_document.__dict__.copy()  # Convierte el objeto a diccionario
-
-    # Verifica si tiene fecha de vencimiento
-    if db_document["TieneFechaVencimiento"]:
-        # Asegúrate de convertir a date si es un datetime
-        fecha_vencimiento = db_document["FechaVencimiento"]
-        if isinstance(fecha_vencimiento, datetime):  # Verifica si es datetime
-            fecha_vencimiento = fecha_vencimiento.date()  # Convierte a date
-        
-        db_document["EstaVencido"] = documento_vencido(fecha_vencimiento)  # Verifica si está vencido
-        
-        # Calcula los días para vencer solo si no está vencido
-        if not db_document["EstaVencido"]:
-            db_document["DiasParaVencer"] = documento_a_vencer(fecha_vencimiento)
-    
-    return db_document
 
 
 # Actualizar un documento
@@ -102,6 +78,38 @@ def delete_document(document_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Documento no encontrado")
     return {"message": "Documento eliminado exitosamente"}
 
+# Obtener un documento por ID
+@document_router.get("/{document_id}", response_model=Document, dependencies=[Depends(JWTBearer())])
+def get_document(document_id: int, db: Session = Depends(get_db)):
+    document_service = DocumentService(db)
+    
+    db_document = document_service.get_document(document_id)
+    if not db_document:
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
+    
+    db_document = db_document.__dict__.copy()  # Convierte el objeto a diccionario
+
+    # Verifica si tiene una foto asociada
+    if db_document["IdArchivo"] is not None:
+        file_service = FileService(db)
+        file = file_service.get_file(db_document["IdArchivo"])
+        db_document["urlFoto"] = file.Ruta if file else None
+    else:
+        db_document["urlFoto"] = None
+
+    # Verifica si tiene fecha de vencimiento
+    if db_document["TieneFechaVencimiento"]:
+        fecha_vencimiento = db_document["FechaVencimiento"]
+        if isinstance(fecha_vencimiento, datetime):  # Verifica si es datetime
+            fecha_vencimiento = fecha_vencimiento.date()  # Convierte a date
+        
+        db_document["EstaVencido"] = documento_vencido(fecha_vencimiento)
+        
+        if not db_document["EstaVencido"]:
+            db_document["DiasParaVencer"] = documento_a_vencer(fecha_vencimiento)
+    
+    return db_document
+
 # Obtener todos los documentos de un usuario
 @document_router.get("/users/{user_id}/documents", response_model=list[Document], dependencies=[Depends(JWTBearer())])
 def get_documents_by_user(user_id: int, db: Session = Depends(get_db)):
@@ -112,9 +120,17 @@ def get_documents_by_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se encontraron documentos para este usuario")
 
     documents_list = []
-    
+
     for doc in documents:
         doc_dict = doc.__dict__.copy()  # Convierte el objeto a diccionario
+
+        # Verifica si tiene una foto asociada
+        if doc_dict["IdArchivo"] is not None:
+            file_service = FileService(db)
+            file = file_service.get_file(doc_dict["IdArchivo"])
+            doc_dict["urlFoto"] = file.Ruta if file else None
+        else:
+            doc_dict["urlFoto"] = None
 
         # Verifica si tiene fecha de vencimiento
         if doc_dict["TieneFechaVencimiento"]:
@@ -122,9 +138,8 @@ def get_documents_by_user(user_id: int, db: Session = Depends(get_db)):
             if isinstance(fecha_vencimiento, datetime):  # Verifica si es datetime
                 fecha_vencimiento = fecha_vencimiento.date()  # Convierte a date
             
-            doc_dict["EstaVencido"] = documento_vencido(fecha_vencimiento)  # Verifica si está vencido
+            doc_dict["EstaVencido"] = documento_vencido(fecha_vencimiento)
             
-            # Calcula los días para vencer solo si no está vencido
             if not doc_dict["EstaVencido"]:
                 doc_dict["DiasParaVencer"] = documento_a_vencer(fecha_vencimiento)
 
@@ -146,18 +161,26 @@ def get_documents_by_vehicle(vehicle_id: str, db: Session = Depends(get_db)):
     for doc in documents:
         doc_dict = doc.__dict__.copy()  # Convierte el objeto a diccionario
 
+        # Verifica si tiene una foto asociada
+        if doc_dict["IdArchivo"] is not None:
+            file_service = FileService(db)
+            file = file_service.get_file(doc_dict["IdArchivo"])
+            doc_dict["urlFoto"] = file.Ruta if file else None
+        else:
+            doc_dict["urlFoto"] = None
+
         # Verifica si tiene fecha de vencimiento
         if doc_dict["TieneFechaVencimiento"]:
             fecha_vencimiento = doc_dict["FechaVencimiento"]
             if isinstance(fecha_vencimiento, datetime):  # Verifica si es datetime
                 fecha_vencimiento = fecha_vencimiento.date()  # Convierte a date
             
-            doc_dict["EstaVencido"] = documento_vencido(fecha_vencimiento)  # Verifica si está vencido
+            doc_dict["EstaVencido"] = documento_vencido(fecha_vencimiento)
             
-            # Calcula los días para vencer solo si no está vencido
             if not doc_dict["EstaVencido"]:
                 doc_dict["DiasParaVencer"] = documento_a_vencer(fecha_vencimiento)
 
         documents_list.append(doc_dict)
 
     return documents_list
+
